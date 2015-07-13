@@ -1,0 +1,10 @@
+{
+  "name": "CI_Corpus_Builder",
+  "version": "0.0.1",
+  "description": "Create a Concept Insights corpus from a zip file",
+  "author": "David E. Powell <david@depowell.com>",
+  "contributors": [{
+  "name": "David POwell",
+  "email": "david@depowell.com"
+}]
+}

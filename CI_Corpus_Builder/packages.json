@@ -1,14 +1,15 @@
 {
   "name": "CI_Corpus_Builder",
   "version": "0.0.1",
+  "main": "ciCorpusBuilder.js",
   "description": "Create a Concept Insights corpus from a zip file",
   "author": "David E. Powell <david@depowell.com>",
   "contributors": [{
-  "name": "David POwell",
+  "name": "David Powell",
   "email": "david@depowell.com"
   	}],
   "engines": {
-    "node": "0.12.4"
+    "node": ">=0.12"
     },
   "scripts": {
     "start": "node ciCorpusBuilder.js"

@@ -1,0 +1,53 @@
+/* CSS declarations go here */
+
+body {
+    background-image: url("sunset.jpg");
+    background-size: 100%;
+    background-attachment: fixed;
+}
+
+.half-width-input {
+	width:100%
+}
+
+.corpustable {
+	width: 25%;
+}
+
+#corpusList, #newCorpus {
+	width: 100%;	
+}
+
+.corpName {
+	width: 50%;
+    box-sizing:border-box;
+    -moz-box-sizing:border-box;
+}
+
+.ziptable {
+    width: 100%;
+}
+
+td {
+	vertical-align: top;
+	white-space: nowrap;
+}
+
+#toobig {
+	border: none;
+	white-space: nowrap;
+	width: 50em;                   
+	overflow: hidden; 
+	text-overflow: ellipsis;
+}
+
+.clear {
+    clear: both;
+}
+
+.div {
+	border: 1px;
+}
+
+
+

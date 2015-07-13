@@ -1,0 +1,87 @@
+<head> 
+	<title>CI Corpus Builder</title>
+	<script type="text/javascript">
+		function combo(thelist, theinput) 
+			{
+		    theinput = document.getElementById(theinput);
+		    var idx = thelist.selectedIndex;
+		    var content = thelist.options[idx].innerHTML;
+		    theinput.value = content;
+		    document.uploadForm.deleteFirst.disabled=false;
+			}
+	  	</script>
+	</head>
+
+<body>
+  <h1><center>Maximum Press CI Corpus Builder</center></h1>
+  <center>--------Upload a zip file of the corpus documents-------------</center><br>
+  {{> status}}
+  {{> hello}}
+  {{> zips}}
+  {{> results}}
+</body>
+
+<template name="hello">
+	<form name="uploadForm" action="upload" method="post" enctype="multipart/form-data">
+    <input type="file" name="zipfile" accept="application/zip" class='half-width-input' /><br><br>
+
+	{{#if creating}}
+		<table class='corpustable'>
+			<tr><td>
+				<input class='corpName' type="text" id="newCorpus" name="newCorpus" value={{firstCorpus.name}} />
+				</td><td>
+				<input type="checkbox" name="deleteFirst" 
+					title="This checkbox causes problems. Don't use it unless you have to.">Delete It First
+				</td></tr>
+			<tr><td>
+				<select name="corpusList" onChange="combo(this, 'newCorpus')">
+					{{#each corpusNames}}
+				  		<option>{{name}}</option>
+				  		{{/each}}
+					</select>
+				</td><td>
+				&nbsp;
+				</td></tr>
+			</table>
+		{{/if}}
+
+	<button id="zipButton" name="uploadButton" disabled>Upload Zip</button>
+	</form>
+	</template>
+	
+<template name="zips">
+	{{#if corpdocs}}
+		<br><b>{{zipcount}} files will go into the corpus:</b><br><br>
+		<small>
+			<table class="ziptable">
+				{{#each corpdocs}}
+					<tr><td><b>File Name:</b></td><td>{{filename}}</td></tr>
+					<tr><td><b>Doc ID:</b></td><td>{{docId}}</td></tr>
+					<tr><td><b>Label:</b></td><td>{{label}}</td></tr>
+					<tr><td><b>Contents:</b></td><td><div id="toobig" title="{{data}}">{{data}}</div></td></tr>
+					<tr><td colspan=2>&nbsp;</td></tr>
+					{{/each}}
+				</table>
+			</small>
+		{{/if}}
+	</template>	
+
+<template name="status">
+	<div align="right">
+		<div align="center" style="background-color:{{statusColor}}; width:20%; font-size: 150%;">
+			{{stat}}
+			</div>
+		</div>
+	</template>	
+
+<template name="results">
+{{#if showresults}}
+<br><br><b>{{count}} files loaded to {{corpusName}}:</b><br><br>
+	<table border=0>
+		{{#each result}}
+			<tr><td>{{label}}</td></tr>
+			{{/each}}
+		</table>
+	{{/if}}
+	</template>
+	

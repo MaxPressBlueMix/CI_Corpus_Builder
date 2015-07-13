@@ -1,0 +1,12 @@
+---
+applications:
+- name:      CI Corpus Builder
+  host:      ci-corpus-builder
+  memory:    256M
+  command:   node app.js
+
+  declared-services:
+    cicbmongodb:
+      label: mongolab
+      plan:  sandbox
+

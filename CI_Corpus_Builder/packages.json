@@ -6,5 +6,11 @@
   "contributors": [{
   "name": "David POwell",
   "email": "david@depowell.com"
-}]
+  	}],
+  "engines": {
+    "node": "0.12.4"
+    },
+  "scripts": {
+    "start": "node ciCorpusBuilder.js"
+    }
 }

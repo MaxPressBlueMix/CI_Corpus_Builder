@@ -2,7 +2,6 @@
   "name": "CI_Corpus_Builder",
   "buildpack": "https://github.com/ind1go/bluemix-buildpack-meteor.git",
   "version": "0.0.1",
-  "main": "ci_CorpusBuilder.js",
   "description": "Create a Concept Insights corpus from a zip file",
   "author": "David E. Powell <david@depowell.com>",
   "contributors": [{
@@ -13,6 +12,5 @@
     "node": ">=0.12"
     },
   "scripts": {
-    "start": "node ci_CorpusBuilder.js"
     }
 }

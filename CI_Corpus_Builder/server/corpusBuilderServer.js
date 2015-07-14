@@ -17,7 +17,7 @@ var AdmZip = Npm.require('adm-zip');
 var zipDocs = new Mongo.Collection(null);
 var go=true; // change this flag to false to abandon processing
 
-function doUnzip() 
+function doUnzip()
 	{
 	go=true; //first step
 	console.log("Unzipping "+tempfile);

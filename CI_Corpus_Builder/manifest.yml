@@ -3,10 +3,9 @@ applications:
 - name:      CI Corpus Builder
   host:      ci-corpus-builder
   memory:    256M
-  command:   node app.js
+  buildpack: https://github.com/ind1go/bluemix-buildpack-meteor.git
 
-  declared-services:
-    cicbmongodb:
-      label: mongolab
-      plan:  sandbox
+  services:
+   - cicbmongodb:
+  instances: 1
 

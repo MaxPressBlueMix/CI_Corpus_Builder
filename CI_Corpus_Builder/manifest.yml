@@ -6,6 +6,6 @@ applications:
   buildpack: https://github.com/ind1go/bluemix-buildpack-meteor.git
 
   services:
-   - cicbmongodb:
+   - cicbmongodb
   instances: 1
 

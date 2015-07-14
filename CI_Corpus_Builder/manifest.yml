@@ -3,7 +3,7 @@ applications:
 - name:      CI Corpus Builder
   host:      ci-corpus-builder
   memory:    256M
-  buildpack: https://github.com/ind1go/bluemix-buildpack-meteor.git
+  buildpack: https://github.com/cloudfoundry-community/cf-meteor-buildpack.git
 
   services:
    - MongoLab-o9

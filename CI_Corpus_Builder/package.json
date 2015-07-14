@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "description": "Create a Concept Insights corpus from a zip file",
   "dependencies": {
-    
+	  "adm-zip": "^0.4.7"
   },
   "author": "David E. Powell <david@depowell.com>",
   "contributors": [
@@ -14,7 +14,7 @@
     }
   ],
   "engines": {
-    "node": ">=0.12"
+    "node": ">=0.10"
   },
   "scripts": {}
 }

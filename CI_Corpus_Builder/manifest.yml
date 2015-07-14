@@ -6,6 +6,6 @@ applications:
   buildpack: https://github.com/ind1go/bluemix-buildpack-meteor.git
 
   services:
-   - cicbmongodb
+   - MongoLab-o9
   instances: 1
 

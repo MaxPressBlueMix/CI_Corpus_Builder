@@ -1,6 +1,6 @@
 {
   "name": "CI_Corpus_Builder",
-  "buildpack": "https://github.com/ind1go/bluemix-buildpack-meteor.git",
+  "buildpack": "https://github.com/cloudfoundry-community/cf-meteor-buildpack.git",
   "version": "0.0.1",
   "description": "Create a Concept Insights corpus from a zip file",
   "dependencies": {

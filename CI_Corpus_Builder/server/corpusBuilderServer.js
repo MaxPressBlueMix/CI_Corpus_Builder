@@ -13,7 +13,7 @@ var tempfile="tempfile.zip";
 var labelTag="<H1>"; //UPPERCASE! Search the doc for this tag to make the label
 
 var fs = Npm.require('fs');
-var AdmZip = Meteor.require('adm-zip');
+var AdmZip = Meteor.npmRequire('adm-zip');
 var zipDocs = new Mongo.Collection(null);
 var go=true; // change this flag to false to abandon processing
 

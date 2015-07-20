@@ -7,6 +7,6 @@ applications:
 
   services:
    - MongoLab-o9
-   - Concept Insights-ki
+   - Concept Insights-service
   instances: 1
 

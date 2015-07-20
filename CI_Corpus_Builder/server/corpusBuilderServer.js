@@ -1,7 +1,7 @@
 'use strict';
 
-var username = '73a9b89e-4414-47a0-9cb8-0a16e7b46ce3';
-var password = 'GJORLArYnWDB';
+var username = '72ca0a13-3531-422d-9da5-f10b7567e035';//'73a9b89e-4414-47a0-9cb8-0a16e7b46ce3';
+var password = 'PsOCij8nY8bP';//'GJORLArYnWDB';
 var corpus_create_URL='https://gateway.watsonplatform.net/concept-insights-beta/api/v1/corpus/'+username+'/';
 var doc_create_URL	 ='https://gateway.watsonplatform.net/concept-insights-beta/api/v1/corpus/'+username+'/';
 var corpus_delete_URL='https://gateway.watsonplatform.net/concept-insights-beta/api/v1/corpus/'+username+'/';

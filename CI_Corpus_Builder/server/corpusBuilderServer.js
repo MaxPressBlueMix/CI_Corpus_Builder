@@ -28,9 +28,10 @@ function doUnzip()
 	zipDocs.remove({});
 	zipEntries.forEach(function(zipEntry) 
 		{
-		var entry={"filename":"","docId":"","label":"","data":""};
+		var entry={"filename":"","docId":"","label":"","url":"","data":""};
 		var fn=zipEntry.entryName; //filename
 		entry.filename=fn;
+		entry.url=decodeURIComponent(fn); //URL to original document
 		entry.docId=fn.replace(/[%\.]/g,""); //Watson doesn't like percent signs or periods.
 //		console.log(entry.docId);
 		var docData=zipEntry.getData().toString();
@@ -128,21 +129,25 @@ function addDoctoCorpus(doc, index, array)
 	{
 	if (go)
 		{
+		var specs={"auth":username+":"+password,
+					"data":{
+						"label": doc.label,
+						"parts":[
+						    {
+						    "name": "url",
+						    "data": doc.url
+						    },
+						    {
+							"name": doc.docId,
+		      	   			"data": doc.data
+		          			}]
+						}
+					};
 		if (docExists(this.corpusName,doc.docId)) //then update it
 			{
 			try
 				{
-				var results=HTTP.post(doc_create_URL+this.corpusName+'/'+doc.docId, 
-						{
-						"auth":username+":"+password,
-						"data":{
-					  		"label": doc.label,
-							"parts":[{
-								"name": doc.docId,
-				      	   		"data": doc.data
-				          		}]
-							}
-						});
+				var results=HTTP.post(doc_create_URL+this.corpusName+'/'+doc.docId, specs);
 				addedDocs.insert({"label":doc.label});
 				console.log("Updated "+doc.label);
 				}
@@ -157,17 +162,7 @@ function addDoctoCorpus(doc, index, array)
 			{
 			try
 				{
-				var results=HTTP.put(doc_create_URL+this.corpusName+'/'+doc.docId, 
-					{
-					"auth":username+":"+password,
-					"data":{
-				  		"label": doc.label,
-						"parts":[{
-							"name": doc.docId,
-			      	   		"data": doc.data
-			          		}]
-						}
-					});
+				var results=HTTP.put(doc_create_URL+this.corpusName+'/'+doc.docId,specs);
 		//		console.log("Add doc "+doc.docId+" to corpus "+this.corpusName+" returned "+results);
 				addedDocs.insert({"label":doc.label});
 				console.log("Added "+doc.label);

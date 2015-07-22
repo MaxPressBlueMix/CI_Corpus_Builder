@@ -31,9 +31,10 @@ function doUnzip()
 		var entry={"filename":"","docId":"","label":"","url":"","data":""};
 		var fn=zipEntry.entryName; //filename
 		entry.filename=fn;
-		entry.url=decodeURIComponent(fn); //URL to original document
+		var temp=decodeURIComponent(fn);
+		entry.url=temp.substring(0,temp.indexOf(".html")); //URL to original document does not end in .html
 		entry.docId=fn.replace(/[%\.]/g,""); //Watson doesn't like percent signs or periods.
-//		console.log(entry.docId);
+		console.log(entry.url);
 		var docData=zipEntry.getData().toString();
 		entry.data=docData;
 		var upData=docData.toUpperCase();

@@ -134,13 +134,13 @@ function addDoctoCorpus(doc, index, array)
 						"label": doc.label,
 						"parts":[
 						    {
-						    "name": "url",
-						    "data": doc.url
-						    },
-						    {
 							"name": doc.docId,
 		      	   			"data": doc.data
-		          			}]
+		          			},
+		          			{
+						    "name": "url",
+						    "data": doc.url
+						    }]
 						}
 					};
 		if (docExists(this.corpusName,doc.docId)) //then update it

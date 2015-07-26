@@ -97,32 +97,35 @@ function corpusExists(corpname)
 
 function removeCorpus(corpusName)
 	{
-	console.log("Removing corpus "+corpusName);
-	Session.set('status','processing');
-	Session.set('statusReason','Working...');
-	Meteor.call("removeCorpus", corpusName, function(err, response) 
+	if (confirm("Delete corpus "+corpusName+"?"))
 		{
-		if (err)
+		console.log("Removing corpus "+corpusName);
+		Session.set('status','processing');
+		Session.set('statusReason','Working...');
+		Meteor.call("removeCorpus", corpusName, function(err, response) 
 			{
-			console.log("removeCorpus err: ");
-			console.log(err);
-			Session.set('status','error');
-			Session.set('statusReason',"Remove failed. See logs."); //"err" shows as "[object Object]"
-			}
-		else if (response)
-			{
-			console.log("removeCorpus response is ");
-			console.log(response);
-			}
-		else
-			{
-			console.log("removeCorpus response is "+response);
-			Session.set('status','borked');
-			Session.set('statusReason','Unexpected error during delete. See logs.');
-			}
-		getCorpusList();
-    	Session.set('state','deleted');
-		});
+			if (err)
+				{
+				console.log("removeCorpus err: ");
+				console.log(err);
+				Session.set('status','error');
+				Session.set('statusReason',"Remove failed. See logs."); //"err" shows as "[object Object]"
+				}
+			else if (response)
+				{
+				console.log("removeCorpus response is ");
+				console.log(response);
+				}
+			else
+				{
+				console.log("removeCorpus response is "+response);
+				Session.set('status','borked');
+				Session.set('statusReason','Unexpected error during delete. See logs.');
+				}
+			getCorpusList();
+	    	Session.set('state','deleted');
+			});
+		}
 	}
 
 function makeCorpus(corpusName)

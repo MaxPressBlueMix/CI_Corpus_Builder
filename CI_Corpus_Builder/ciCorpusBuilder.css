@@ -2,12 +2,14 @@
 
 body {
     background-image: url("sunset.jpg");
-    background-size: 100%;
+    background-size: 100% 100%;
     background-attachment: fixed;
+    background-repeat: no-repeat;
 }
 
 fieldset {
 	width: 35%;
+	min-width: 330px;
 	table-layout: fixed;
 	border-width:1;
 	border-style:ridge;

@@ -6,12 +6,36 @@ body {
     background-attachment: fixed;
 }
 
+fieldset {
+	width: 35%;
+	table-layout: fixed;
+	border-width:1;
+	border-style:ridge;
+	border-color:blue;
+	border-radius: 15px;
+	box-shadow: 10px 10px 5px #888888;
+	}
+
+legend {
+	border:none;
+	}
+
 .half-width-input {
 	width:100%
 }
 
+.double-td-left {
+	white-space: pre-line;
+}
+
 .corpustable {
-	width: 25%;
+	width: 100%;
+	table-layout: fixed;
+	border-width:1;
+	border-style:ridge;
+	border-color:blue;
+	border-radius: 15px;
+	box-shadow: 10px 10px 5px #888888;
 }
 
 #corpusList, #newCorpus {

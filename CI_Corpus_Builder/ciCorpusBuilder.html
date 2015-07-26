@@ -1,20 +1,9 @@
 <head> 
 	<title>CI Corpus Builder</title>
-	<script type="text/javascript">
-		function combo(thelist, theinput) 
-			{
-		    theinput = document.getElementById(theinput);
-		    var idx = thelist.selectedIndex;
-		    var content = thelist.options[idx].innerHTML;
-		    theinput.value = content;
-		    document.uploadForm.deleteFirst.disabled=false;
-			}
-	  	</script>
 	</head>
-
 <body>
   <h1><center>Maximum Press CI Corpus Builder</center></h1>
-  <center>--------Upload a Zip File of the Corpus Documents-------------</center><br>
+  <center>------------Manage Corpora and Corpus Documents-------------</center><br>
   {{> status}}
   {{> hello}}
   {{> zips}}
@@ -23,35 +12,48 @@
 
 <template name="hello">
 	<form name="uploadForm" action="upload" method="post" enctype="multipart/form-data">
-    <input type="file" name="zipfile" accept="application/zip" class='half-width-input' /><br><br>
-
-	{{#if creating}}
-		<table class='corpustable'>
-			<tr><td>
-				<input class='corpName' type="text" id="newCorpus" name="newCorpus" value={{firstCorpus.name}} />
-				</td><td>
-				<input type="checkbox" name="deleteFirst" 
-					title="This checkbox causes problems. Don't use it unless you have to.">Delete It First
-				</td></tr>
-			<tr><td>
-				<select name="corpusList" onChange="combo(this, 'newCorpus')">
-					{{#each corpusNames}}
-				  		<option>{{name}}</option>
-				  		{{/each}}
-					</select>
-				</td><td>
-				&nbsp;
-				</td></tr>
+	
+	<fieldset>
+        <legend>Select, add, or delete a corpus</legend>
+    
+   		<table>
+			<tr>
+				<td>
+					<input class='corpName' type="text" id="newCorpus" name="newCorpus" value={{firstCorpus.name}} />
+					</td>
+				<td>
+					<button id="addButton" name="addButton" disabled>Add Corpus</button>
+					</td>
+				</tr>
+			<tr>
+				<td>
+					<select name="corpusList" id="corpusList">
+						{{#each corpusNames}}
+					  		<option>{{name}}</option>
+					  		{{/each}}
+						</select>
+					</td>
+				<td>
+					<button id="deleteButton" name="deleteButton">Delete Corpus</button>
+					</td>
+				</tr>
 			</table>
-		{{/if}}
+    </fieldset>
 
-	<button id="zipButton" name="uploadButton" disabled>Upload Zip</button>
+	<br><br>		
+
+	<fieldset>
+        <legend>Upload a .zip file</legend>
+
+	    <input type="file" name="zipfile" accept="application/zip" class='half-width-input' /><br><br>
+		<button id="zipButton" name="uploadButton" disabled>Upload</button>
+    	</fieldset>
 	</form>
 	</template>
 	
 <template name="zips">
 	{{#if corpdocs}}
-		<br><b>{{zipcount}} files will go into the corpus:</b><br><br>
+		<br><b>{{zipcount}} files will go into the {{corpusName}} corpus:</b><br><br>
 		<small>
 			<table class="ziptable">
 				{{#each corpdocs}}

@@ -31,7 +31,7 @@ function sendZip(zipfile)
 			else
 				{
 				Session.set('zipResults',response);
-				document.getElementById("zipButton").childNodes[0].nodeValue="Update Corpus";
+				document.getElementById("zipButton").childNodes[0].nodeValue="Add Documents";
 				Session.set('buttonAction','create');
 				Session.set('status','ok');
 				Session.set('statusReason','OK');
@@ -75,6 +75,10 @@ function getCorpusList()
 			console.log("listCorpus response is "+response);
 			Session.set('corpora',[{"name":"corpus one"},{"name":"corpus two"},{"name":"corpus three"},{"name":"corpus four"}]);
 			}
+
+		var existing=corpusExists(document.uploadForm.newCorpus.value);
+		document.uploadForm.deleteButton.disabled=!existing;
+		document.uploadForm.addButton.disabled=existing;
 		});
 	}
 
@@ -96,13 +100,29 @@ function removeCorpus(corpusName)
 	console.log("Removing corpus "+corpusName);
 	Session.set('status','processing');
 	Session.set('statusReason','Working...');
-	
-	//We have to call the delete synchronously, since we need to 
-	//wait until it is deleted before we re-create it.  Unfortunately,
-	//without a callback function we can't be sure it was deleted.
-	//In this case the create function will fail. There is still a
-	//problem with delay on the Watson side.
-	Meteor.call("removeCorpus", corpusName);
+	Meteor.call("removeCorpus", corpusName, function(err, response) 
+		{
+		if (err)
+			{
+			console.log("removeCorpus err: ");
+			console.log(err);
+			Session.set('status','error');
+			Session.set('statusReason',"Remove failed. See logs."); //"err" shows as "[object Object]"
+			}
+		else if (response)
+			{
+			console.log("removeCorpus response is ");
+			console.log(response);
+			}
+		else
+			{
+			console.log("removeCorpus response is "+response);
+			Session.set('status','borked');
+			Session.set('statusReason','Unexpected error during delete. See logs.');
+			}
+		getCorpusList();
+    	Session.set('state','deleted');
+		});
 	}
 
 function makeCorpus(corpusName)
@@ -110,7 +130,7 @@ function makeCorpus(corpusName)
 	console.log("Creating corpus "+corpusName);
 	Session.set('status','processing');
 	Session.set('statusReason','Working...');
-	Session.set('state','creating');
+	Session.set('state','adding');
 	Meteor.call("createCorpus", corpusName, function(err, response) 
 		{
 		if (err)
@@ -118,7 +138,7 @@ function makeCorpus(corpusName)
 			console.log("makeCorpus err: ");
 			console.log(err);
 			Session.set('status','error');
-			Session.set('statusReason',"Failed. See logs."); //"err" shows as "[object Object]"
+			Session.set('statusReason',"Add failed. See logs."); //"err" shows as "[object Object]"
 			}
 		else if (response)
 			{
@@ -129,9 +149,10 @@ function makeCorpus(corpusName)
 			{
 			console.log("makeCorpus response is "+response);
 			Session.set('status','borked');
-			Session.set('statusReason','Unexpected error. See logs.');
+			Session.set('statusReason','Unexpected add error. See logs.');
 			}
-    	Session.set('state','completed');
+		getCorpusList();
+    	Session.set('state','added');
 		});
 	}
 
@@ -141,6 +162,10 @@ console.log("Loading corpus "+corpusName);
 Session.set('status','processing');
 Session.set('statusReason','Working...');
 Session.set('state','loading');
+document.uploadForm.newCorpus.disabled=true;
+document.uploadForm.deleteButton.disabled=true;
+document.uploadForm.uploadButton.disabled=true;
+document.uploadForm.corpusList.disabled=true;
 Meteor.call("fillCorpus", corpusName, function(err, response) 
 	{
 	if (err)
@@ -156,6 +181,10 @@ Meteor.call("fillCorpus", corpusName, function(err, response)
 		console.log(response);
 		Session.set('status','ok');
 		Session.set('statusReason','OK');
+		document.uploadForm.newCorpus.disabled=false;
+		document.uploadForm.deleteButton.disabled=false;
+		document.uploadForm.uploadButton.disabled=true;
+		document.uploadForm.corpusList.disabled=false;
 		}
 	else
 		{
@@ -165,6 +194,16 @@ Meteor.call("fillCorpus", corpusName, function(err, response)
 		}
 	});
 }
+
+function corpusChanged(e,template)
+	{
+	console.log("Selected corpus "+e.target.value);
+	var exists=corpusExists(e.target.value);
+	console.log("document.uploadForm.addButton.disabled is "+document.uploadForm.addButton.disabled);
+	document.uploadForm.addButton.disabled=exists;
+	document.uploadForm.deleteButton.disabled=!exists;
+//	document.getElementById("zipButton").childNodes[0].nodeValue=(exists?"Update Corpus":"Create Corpus"); 
+	}
 
 
 if (Meteor.isClient) {
@@ -207,6 +246,7 @@ Template.hello.helpers({
 		
 	corpusNames: function()
 		{
+		getCorpusList();
 		return Session.get("corpora");
 		},
 		
@@ -223,6 +263,7 @@ Template.hello.helpers({
 		{
 		return Session.get('state');
 		}
+
 		
   });
 
@@ -245,6 +286,11 @@ Template.hello.helpers({
 	"state": function()
 		{
 		return Session.get('state');
+		},
+		
+	"corpusName":function()
+		{
+		return Session.get('corpusName');
 		}
 	  });
 
@@ -267,53 +313,73 @@ Template.hello.helpers({
 		  });
 
   Template.hello.events({
-    'click button': function (e,template) {
+	  	
+	  'click #addButton': function (e,template)
+		{
+		console.log("Clicked Add Corpus button");
+		Session.set('status','processing');
+		Session.set('statusReason','Working...');
+		e.preventDefault();
+		e.stopPropagation();
+		makeCorpus(document.uploadForm.newCorpus.value);
+		Session.set('status','ok');
+		Session.set('statusReason','OK');
+		},
+
+	  'click #deleteButton': function (e,template)
+		{
+		console.log("Clicked Delete Corpus button");
+		Session.set('status','processing');
+		Session.set('statusReason','Working...');
+		e.preventDefault();
+		e.stopPropagation();
+		removeCorpus(document.uploadForm.newCorpus.value);
+		Session.set('status','ok');
+		Session.set('statusReason','OK');
+		},
+
+	  
+	  'click #zipButton': function (e,template) 
+	  	{
     	Session.set('status','processing');
     	Session.set('statusReason','Working...');
     	Session.set('state','uploading');
 	    e.preventDefault();
 	    e.stopPropagation();
-	    if (Session.get('buttonAction')=='upload')
+	    if (Session.get('buttonAction')=='upload') //send zip
 	    	{
 		    var file = template.find('.half-width-input').files[0];
-		    var reader = new FileReader();
-		    reader.onload=function(event)
+		    if (file==null)
 		    	{
-		    	var data=event.target.result;
-		    	var sfFile=EJSON.stringify(data);
-		    	var sent=sendZip(sfFile);
-		    	getCorpusList(); //populate the listbox of corpora
+		    	alert("No file selected!");
 		    	}
-		    reader.onerror=function(event)
+		    else
 		    	{
-		    	var err=event.target.error;
-		    	Session.set('status','error');
-		    	Session.set('statusReason',err);
-		    	console.log(err);
-		    	alert("Error!\n"+err.name);
-		    	document.uploadForm.uploadButton.disabled=true;
-		    	}
-		    reader.readAsBinaryString(file);
-		    }
-	    else //create the corpus
+			    var reader = new FileReader();
+			    reader.onload=function(event)
+			    	{
+			    	var data=event.target.result;
+			    	var sfFile=EJSON.stringify(data);
+			    	var sent=sendZip(sfFile);
+					Session.set('corpusName',document.uploadForm.newCorpus.value);
+			    	}
+			    reader.onerror=function(event)
+			    	{
+			    	var err=event.target.error;
+			    	Session.set('status','error');
+			    	Session.set('statusReason',err);
+			    	console.log(err);
+			    	alert("Error!\n"+err.name);
+			    	document.uploadForm.uploadButton.disabled=true;
+			    	}
+			    reader.readAsBinaryString(file);
+			    }
+	    	}
+	    else //load
 	    	{
 	    	Session.set('state','creating');
 			Session.set('zipResults',''); //clear the zips section
 			Session.set('corpusName',document.uploadForm.newCorpus.value);
-			console.log("Delete box is "+document.uploadForm.deleteFirst.checked);
-			document.uploadForm.newCorpus.disabled=true;
-			document.uploadForm.deleteFirst.disabled=true;
-			document.uploadForm.uploadButton.disabled=true;
-			document.uploadForm.corpusList.disabled=true;
-	    	if (document.uploadForm.deleteFirst.checked) //should not be checked if new corpus typed in
-	    		{
-	    		removeCorpus(document.uploadForm.newCorpus.value)
-		    	makeCorpus(document.uploadForm.newCorpus.value);	
-	    		}
-	    	else if (!corpusExists(document.uploadForm.newCorpus.value)) //only if new corpus typed in
-	    		{
-		    	makeCorpus(document.uploadForm.newCorpus.value);	
-	    		}
 	    	loadCorpus(document.uploadForm.newCorpus.value);
 	    	Session.set('state','completed');
 	    	}
@@ -339,12 +405,19 @@ Template.hello.helpers({
     	  
   	 'change #newCorpus':function(e,template)
   	 	{
-  		console.log("Selected corpus "+e.target.value);
-  		var exists=corpusExists(e.target.value);
-  		document.uploadForm.deleteFirst.disabled=!exists;
-  		document.uploadForm.deleteFirst.checked=exists;
-  		document.getElementById("zipButton").childNodes[0].nodeValue=(exists?"Update Corpus":"Create Corpus"); 
+  		corpusChanged(e,template);
   		},
+
+  	 'change #corpusList':function(e,template)
+   	 	{
+ 		var theinput = document.getElementById('newCorpus');
+		var idx = document.uploadForm.corpusList.selectedIndex;
+		var content = document.uploadForm.corpusList.options[idx].innerHTML;
+		theinput.value = content;
+		document.uploadForm.addButton.disabled=true;
+		document.uploadForm.deleteButton.disabled=false;
+   		corpusChanged(e,template);
+   		},
 
   	'submit form': function(e, template) {
    	    e.preventDefault();

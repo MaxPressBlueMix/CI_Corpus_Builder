@@ -81,7 +81,8 @@ function removeACorpus(name)
 	console.log("Deleting corpus "+name);
 	try
 		{
-		var results=HTTP.del(corpus_delete_URL+name,
+		var subs={'account_id':accountID,'corpus':name};
+		var results=HTTP.del(fixup(corpus_delete_URL,subs),
 			{
 			"auth": username+":"+password
 	  		});
@@ -124,7 +125,8 @@ function docExists(corpus, docId)
 	var exists=false;
 	try
 		{
-		var results=HTTP.get(fetch_doc_URL+corpus+'/'+docId, 
+		var subs={'account_id':accountID,'corpus':corpus,'document':docId};
+		var results=HTTP.get(fixup(fetch_doc_URL,subs), 
 			{
 			"auth":username+":"+password
 			});
@@ -173,11 +175,13 @@ function addDoctoCorpus(doc, index, array)
 						    }]
 						}
 					};
+		var subs={'account_id':accountID,'corpus':this.corpusName,'document':doc.docId};
+		
 		if (docExists(this.corpusName,doc.docId)) //then update it
 			{
 			try
 				{
-				var results=HTTP.post(doc_create_URL+this.corpusName+'/'+doc.docId, specs);
+				var results=HTTP.post(fixup(doc_create_URL,subs), specs);
 				addedDocs.insert({"label":doc.label});
 				console.log("Updated "+doc.label);
 				}
@@ -192,7 +196,7 @@ function addDoctoCorpus(doc, index, array)
 			{
 			try
 				{
-				var results=HTTP.put(doc_create_URL+this.corpusName+'/'+doc.docId,specs);
+				var results=HTTP.put(fixup(doc_create_URL,subs), specs);
 		//		console.log("Add doc "+doc.docId+" to corpus "+this.corpusName+" returned "+results);
 				addedDocs.insert({"label":doc.label});
 				console.log("Added "+doc.label);
@@ -268,7 +272,7 @@ Meteor.methods({
 		console.log("Retrieved corpora",corps);
 		corps=JSON.parse(corps.content);
 		
-		console.log(corps);
+//		console.log(corps);
 
 		var ourCorpora=[];
 		for (var seq in corps.corpora) 

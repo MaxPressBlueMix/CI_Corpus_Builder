@@ -134,7 +134,7 @@ function docExists(corpus, docId)
 		{
 		// exists var already false
 		}
-//	console.log("document "+docId+(exists?" exists":" does not exist")+" in corpus "+corpus);
+	console.log("document "+docId+(exists?" exists":" does not exist")+" in corpus "+corpus);
 	return exists;
 	}
 

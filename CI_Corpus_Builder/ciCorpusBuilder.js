@@ -92,7 +92,7 @@ function corpusExists(corpname)
 		if (corpname==corps[corp].name)
 			existing=true;
 		}
-	console.log("Corpus "+corpname+(existing?" exists":" does not exist")+" in the list");
+//	console.log("Corpus "+corpname+(existing?" exists":" does not exist")+" in the list");
 	return existing;
 	}
 
@@ -407,7 +407,7 @@ Template.hello.helpers({
     	Session.set('state','pre-upload');
    	 	},
     	  
-  	 'keypress #newCorpus':function(e,template)
+  	 'keyup #newCorpus':function(e,template)
   	 	{
   		corpusChanged(e,template);
   		},

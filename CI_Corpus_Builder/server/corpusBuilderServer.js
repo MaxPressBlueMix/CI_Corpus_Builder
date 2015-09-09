@@ -102,7 +102,7 @@ function makeACorpus(name)
 		console.log("Creating corpus "+name);
 		try
 			{
-			var subs={'account_id':username,'corpus':name};
+			var subs={'account_id':accountID,'corpus':name};
 			var results=HTTP.put(fixup(corpus_create_URL,subs),
 				{
 				"data":{"access": "private"},

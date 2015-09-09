@@ -1,14 +1,27 @@
 'use strict';
 
-var username = '72ca0a13-3531-422d-9da5-f10b7567e035';//'73a9b89e-4414-47a0-9cb8-0a16e7b46ce3';
-var password = 'PsOCij8nY8bP';//'GJORLArYnWDB';
-var corpus_create_URL='https://gateway.watsonplatform.net/concept-insights-beta/api/v1/corpus/'+username+'/';
-var doc_create_URL	 ='https://gateway.watsonplatform.net/concept-insights-beta/api/v1/corpus/'+username+'/';
-var corpus_delete_URL='https://gateway.watsonplatform.net/concept-insights-beta/api/v1/corpus/'+username+'/';
-var corpusListUrl='https://gateway.watsonplatform.net/concept-insights-beta/api/v1/corpus/';
-var wiki_concepts_URL="https://gateway.watsonplatform.net/concept-insights-beta/api/v1/graph/wikipedia/en-20120601?func=annotateText";
-var corpus_search_URL="https://gateway.watsonplatform.net/concept-insights-beta/api/v1/searchable/"+username+"/";
-var fetch_doc_URL="https://gateway.watsonplatform.net/concept-insights-beta/api/v1/corpus/"+username+"/";
+//var username = '72ca0a13-3531-422d-9da5-f10b7567e035';//'73a9b89e-4414-47a0-9cb8-0a16e7b46ce3';
+//var password = 'PsOCij8nY8bP';//'GJORLArYnWDB';
+//var corpus_create_URL='https://gateway.watsonplatform.net/concept-insights-beta/api/v1/corpus/'+username+'/';
+//var doc_create_URL	 ='https://gateway.watsonplatform.net/concept-insights-beta/api/v1/corpus/'+username+'/';
+//var corpus_delete_URL='https://gateway.watsonplatform.net/concept-insights-beta/api/v1/corpus/'+username+'/';
+//var corpusListUrl='https://gateway.watsonplatform.net/concept-insights-beta/api/v1/corpus/';
+//var wiki_concepts_URL="https://gateway.watsonplatform.net/concept-insights-beta/api/v1/graph/wikipedia/en-20120601?func=annotateText";
+//var corpus_search_URL="https://gateway.watsonplatform.net/concept-insights-beta/api/v1/searchable/"+username+"/";
+//var fetch_doc_URL="https://gateway.watsonplatform.net/concept-insights-beta/api/v1/corpus/"+username+"/";
+var service_url="https://gateway.watsonplatform.net/concept-insights/api";
+var username = '60ec90db-ee07-4def-9b27-b0f9fcafefb2';
+var password = 'WC5HheERgF6a';
+var baseURL="https://gateway.watsonplatform.net/concept-insights/api/v2";
+var corpus_create_URL=baseURL+'/corpora/{account_id}/{corpus}';
+var doc_create_URL	 =baseURL+'/corpora/{account_id}/{corpus}/documents/{document}';
+var corpus_delete_URL=baseURL+'/corpora/{account_id}/{corpus}';
+var corpusListUrl=baseURL+'/corpora/{account_id}';
+var wiki_concepts_URL=baseURL+'/corpora/{account_id}/{corpus}/related_concepts';
+var corpus_search_URL=baseURL+'/corpora/{account_id}/{corpus}/conceptual_search';
+var fetch_doc_URL=baseURL+'/corpora/{account_id}/{corpus}/documents/{document}';
+var account_URL=baseURL+'/accounts';
+
 var tempfile="tempfile.zip";
 var labelTag="<H1>"; //UPPERCASE! Search the doc for this tag to make the label
 
@@ -16,6 +29,21 @@ var fs = Npm.require('fs');
 var AdmZip = Meteor.npmRequire('adm-zip');
 var zipDocs = new Mongo.Collection(null);
 var go=true; // change this flag to false to abandon processing
+
+/* Substitute some variables in a string
+ * subObj is name:value pairs, where name
+ * is in curly brackets in the original.
+ */
+function fixup(original,subObj)
+	{
+	console.log("Incoming:",original);
+	for (var old in subObj)
+		{
+		original=original.replace("{"+old+"}",subObj[old]);
+		}
+	console.log("Outgoing:",original);
+	return original;
+	}
 
 function doUnzip()
 	{
@@ -53,7 +81,8 @@ function removeACorpus(name)
 	console.log("Deleting corpus "+name);
 	try
 		{
-		var results=HTTP.del(corpus_delete_URL+name,
+		var subs={'account_id':accountID,'corpus':name};
+		var results=HTTP.del(fixup(corpus_delete_URL,subs),
 			{
 			"auth": username+":"+password
 	  		});
@@ -74,7 +103,8 @@ function makeACorpus(name)
 		console.log("Creating corpus "+name);
 		try
 			{
-			var results=HTTP.put(corpus_create_URL+name,
+			var subs={'account_id':accountID,'corpus':name};
+			var results=HTTP.put(fixup(corpus_create_URL,subs),
 				{
 				"data":{"access": "private"},
 				"auth": username+":"+password
@@ -95,7 +125,8 @@ function docExists(corpus, docId)
 	var exists=false;
 	try
 		{
-		var results=HTTP.get(fetch_doc_URL+corpus+'/'+docId, 
+		var subs={'account_id':accountID,'corpus':corpus,'document':docId};
+		var results=HTTP.get(fixup(fetch_doc_URL,subs), 
 			{
 			"auth":username+":"+password
 			});
@@ -105,7 +136,7 @@ function docExists(corpus, docId)
 		{
 		// exists var already false
 		}
-//	console.log("document "+docId+(exists?" exists":" does not exist")+" in corpus "+corpus);
+	console.log("document "+docId+(exists?" exists":" does not exist")+" in corpus "+corpus);
 	return exists;
 	}
 
@@ -144,11 +175,13 @@ function addDoctoCorpus(doc, index, array)
 						    }]
 						}
 					};
+		var subs={'account_id':accountID,'corpus':this.corpusName,'document':doc.docId};
+		
 		if (docExists(this.corpusName,doc.docId)) //then update it
 			{
 			try
 				{
-				var results=HTTP.post(doc_create_URL+this.corpusName+'/'+doc.docId, specs);
+				var results=HTTP.post(fixup(doc_create_URL,subs), specs);
 				addedDocs.insert({"label":doc.label});
 				console.log("Updated "+doc.label);
 				}
@@ -163,7 +196,7 @@ function addDoctoCorpus(doc, index, array)
 			{
 			try
 				{
-				var results=HTTP.put(doc_create_URL+this.corpusName+'/'+doc.docId,specs);
+				var results=HTTP.put(fixup(doc_create_URL,subs), specs);
 		//		console.log("Add doc "+doc.docId+" to corpus "+this.corpusName+" returned "+results);
 				addedDocs.insert({"label":doc.label});
 				console.log("Added "+doc.label);
@@ -231,22 +264,25 @@ Meteor.methods({
 		{
 		console.log("Getting corpus list...");
 		var corps=null;
-		var corps=HTTP.get(corpusListUrl, 
+		var corps=HTTP.get(fixup(corpusListUrl,{"account_id":accountID}), 
 			{
-			"access": "public",
-			"id": username,
 			"auth":username+":"+password
 			});
 
-		console.log("Retrieved corpora");
+		console.log("Retrieved corpora",corps);
+		corps=JSON.parse(corps.content);
+		
+//		console.log(corps);
+
 		var ourCorpora=[];
-		for (var seq in corps.data) 
+		for (var seq in corps.corpora) 
 			{
-			var corpname=corps.data[seq].id;
+			var corpname=corps.corpora[seq].id;
+			console.log(corpname);
 			var parts=corpname.split('/');
-			if (username==parts[1])
+			if (accountID==parts[2])
 				{
-				ourCorpora=ourCorpora.concat({"name":parts[2]});
+				ourCorpora=ourCorpora.concat({"name":parts[3]});
 				}
 			}
 		
@@ -256,4 +292,24 @@ Meteor.methods({
 
 }); //meteor.methods
 
+function fetchAccountID()
+	{
+	console.log("Getting account ID...");
+	var accountID=null;
+	var accts=HTTP.get(account_URL, 
+		{
+		"auth":username+":"+password
+		});
+
+	if (accts)
+		{
+		accountID=JSON.parse(accts.content).accounts[0].account_id;
+		}
+	console.log("Account ID is",accountID);
+	
+	return accountID;
+	}
+
+//first thing, go get our account id
+var accountID=fetchAccountID();
 

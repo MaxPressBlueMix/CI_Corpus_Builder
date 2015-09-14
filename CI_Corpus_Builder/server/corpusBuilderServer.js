@@ -1,17 +1,8 @@
 'use strict';
 
-//var username = '72ca0a13-3531-422d-9da5-f10b7567e035';//'73a9b89e-4414-47a0-9cb8-0a16e7b46ce3';
-//var password = 'PsOCij8nY8bP';//'GJORLArYnWDB';
-//var corpus_create_URL='https://gateway.watsonplatform.net/concept-insights-beta/api/v1/corpus/'+username+'/';
-//var doc_create_URL	 ='https://gateway.watsonplatform.net/concept-insights-beta/api/v1/corpus/'+username+'/';
-//var corpus_delete_URL='https://gateway.watsonplatform.net/concept-insights-beta/api/v1/corpus/'+username+'/';
-//var corpusListUrl='https://gateway.watsonplatform.net/concept-insights-beta/api/v1/corpus/';
-//var wiki_concepts_URL="https://gateway.watsonplatform.net/concept-insights-beta/api/v1/graph/wikipedia/en-20120601?func=annotateText";
-//var corpus_search_URL="https://gateway.watsonplatform.net/concept-insights-beta/api/v1/searchable/"+username+"/";
-//var fetch_doc_URL="https://gateway.watsonplatform.net/concept-insights-beta/api/v1/corpus/"+username+"/";
 var service_url="https://gateway.watsonplatform.net/concept-insights/api";
-var username = '60ec90db-ee07-4def-9b27-b0f9fcafefb2';
-var password = 'WC5HheERgF6a';
+var username = 'f7f5fa94-8a06-4376-a082-c83d69b9d344';
+var password = 'rEigWBfxVzyu';
 var baseURL="https://gateway.watsonplatform.net/concept-insights/api/v2";
 var corpus_create_URL=baseURL+'/corpora/{account_id}/{corpus}';
 var doc_create_URL	 =baseURL+'/corpora/{account_id}/{corpus}/documents/{document}';

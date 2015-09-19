@@ -1,6 +1,6 @@
 ---
 declared-services:
-  concept-insights-v1:
+  Concept Insights-v1:
     label: concept_insights
     plan: ecosystem
 applications:

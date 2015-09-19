@@ -1,4 +1,8 @@
 ---
+declared-services:
+  concept-insights-v1:
+    label: concept_insights
+    plan: ecosystem
 applications:
 - name:      CI Corpus Builder
   host:      ci-corpus-builder

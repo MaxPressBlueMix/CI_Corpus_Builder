@@ -1,9 +1,44 @@
 'use strict';
 
-var service_url="https://gateway.watsonplatform.net/concept-insights/api";
-var username = 'f7f5fa94-8a06-4376-a082-c83d69b9d344';
-var password = 'rEigWBfxVzyu';
-var baseURL="https://gateway.watsonplatform.net/concept-insights/api/v2";
+//var bluemix = Npm.require('bluemix');
+var extend = Npm.require('util')._extend;
+var fs = Npm.require('fs');
+var AdmZip = Meteor.npmRequire('adm-zip');
+var zipDocs = new Mongo.Collection(null);
+var go=true; // change this flag to false to abandon processing
+
+var getServiceCreds = function(name) {
+    if (process.env.VCAP_SERVICES) {
+        var services = JSON.parse(process.env.VCAP_SERVICES);
+        for (var service_name in services) {
+            if (service_name.indexOf(name) === 0) {
+                var service = services[service_name][0];
+                return {
+                    url: service.credentials.url,
+                    username: service.credentials.username,
+                    password: service.credentials.password
+                	};
+            	}
+        	}
+    	}
+    return {};
+	}
+
+
+//if bluemix credentials exists, then override local
+//To run this locally, you have to create an environment
+//variable called VCAP_SERVICES that contains the JSON
+//object that has the service credentials in it.
+var credentials = extend(
+	{version: 'v2'},
+	getServiceCreds('concept_insights')); // VCAP_SERVICES
+console.log(credentials);
+
+var service_url=credentials.url; //"https://gateway.watsonplatform.net/concept-insights/api";
+var username=credentials.username; //'f7f5fa94-8a06-4376-a082-c83d69b9d344';
+var password=credentials.password; //'rEigWBfxVzyu';
+
+var baseURL=service_url+"/v2";
 var corpus_create_URL=baseURL+'/corpora/{account_id}/{corpus}';
 var doc_create_URL	 =baseURL+'/corpora/{account_id}/{corpus}/documents/{document}';
 var corpus_delete_URL=baseURL+'/corpora/{account_id}/{corpus}';
@@ -16,10 +51,7 @@ var account_URL=baseURL+'/accounts';
 var tempfile="tempfile.zip";
 var labelTag="<H1>"; //UPPERCASE! Search the doc for this tag to make the label
 
-var fs = Npm.require('fs');
-var AdmZip = Meteor.npmRequire('adm-zip');
-var zipDocs = new Mongo.Collection(null);
-var go=true; // change this flag to false to abandon processing
+
 
 /* Substitute some variables in a string
  * subObj is name:value pairs, where name

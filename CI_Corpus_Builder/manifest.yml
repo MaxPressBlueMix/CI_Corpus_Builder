@@ -11,6 +11,6 @@ applications:
 
   services:
    - MongoLab-o9
-   - concept-insights-v1
+   - Concept Insights-v1
   instances: 1
 
